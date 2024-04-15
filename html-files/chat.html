@@ -1,0 +1,124 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Chat Room</title> 
+<script src="/socket.io/socket.io.js"></script> 
+<style>
+        body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+    }
+
+    header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .review-form {
+        background-color: #fff;
+        margin: 20px auto;
+        padding: 20px;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .review-form h2 {
+        margin-top: 0;
+    }
+
+    .review-form label,
+    .review-form input,
+    .review-form textarea,
+    .review-form button {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .review-form input,
+    .review-form textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .review-form button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+
+</head> 
+<body> 
+    <header>
+        <h1>Involve in Chat</h1>
+    </header>
+    <section class="review-form">
+        <h2>enter your details to chat</h2>
+        
+        
+Name: <input type="text" id="name"><br /> 
+Age: <input type="number" id="age"><br /> 
+<button onclick="createUser()">Create User</button>
+
+</section>
+
+<footer>
+    <p>&copy; 2024 Review Site</p>
+</footer>
+
+<!-- <div id="error-container" style="color: red; font-size: larger;"></div>  -->
+<script> 
+var user; 
+var socket=io(); 
+function createUser(){ 
+var age=document.getElementById('age').value; 
+// if(age>18){ 
+socket.emit('createUser',document.getElementById('name').value+"__"+document.getElementById('age').value+" : ");} 
+// else{ 
+// document.getElementById('error-container').innerHTML="Age is less than 18";} 
+// }; 
+socket.on('userExists',function(data){ 
+// document.getElementById('error-container').innerHTML=data; 
+}); 
+socket.on('setUser',function(data){ 
+user=data.username; 
+document.body.innerHTML='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Simple Website</title><style>body{font-family:Arial,sans-serif;margin:0;padding:0;background-color:#f8f8f8}header{background-color:#333;color:#fff;padding:20px;text-align:center}main{padding:20px}.container{max-width:600px;margin:0 auto}label{display:block;margin-bottom:10px}textarea{width:100%;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:5px;resize:vertical}button{background-color:#333;color:#fff;border:none;border-radius:5px;padding:10px 20px;font-size:16px;cursor:pointer}button:hover{background-color:#555}footer{background-color:#333;color:#fff;text-align:center;padding:10px;position:fixed;bottom:0;width:100%}</style></head><body><header><h1>Chat Room</h1></header><main><div class="container"><label for="message">Enter your message:</label><textarea id="message" name="message" placeholder="Type your message here..." required></textarea><button onclick="sendMessage()" id="sendButton">Send</button><div id="message-container"></div></div></main><footer><p>&copy; 2024 Simple Website</p></footer></body></html>';
+
+}); 
+function sendMessage(){ 
+var msg=document.getElementById('message').value; 
+if(msg){ 
+socket.emit('msg',{message:msg, user: user}); 
+} 
+} 
+socket.on('newmsg',function(data){ 
+if(user){ 
+document.getElementById('message-container').innerHTML += '<div><b>' + data.user + data.message + '</div>'; 
+} 
+}) 
+</script> 
+</body> 
+</html>
